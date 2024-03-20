@@ -10,8 +10,6 @@ export default function Home() {
         let lists = products.map(product => (
             <li key={product.id}>
                 Product Name: {product.name}
-                {product.id === 0  ? <div></div> : <button onClick={updateProduct(product.id)}>Update Product</button>}
-                {product.id === 0 ? <div></div> : <button onClick={deleteProduct(product.id)}>Delete Product</button>}
                 <br></br>
                 Price: {product.price}{"$"}
                 <br></br>

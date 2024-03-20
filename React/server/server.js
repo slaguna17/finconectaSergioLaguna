@@ -2,12 +2,14 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const dotenv = require('dotenv')
+const jwt = require('jsonwebtoken')
 const productModel = require('./models/productModel')
 
 //SERVER
 const app = express()
 const port = process.env.PORT || 5000
 app.use(express.json())
+
 
 //Variables de ambiente
 dotenv.config()
@@ -19,9 +21,48 @@ mongoose.connect(mongoURL).then(() =>{
     console.log("DB is connected")   
 }).catch((error) => console.log(error))
 
+//Middleware
+function authenticateToken(req, res, next){
+    const authHeader = req.headers['authorization']
+    const token = authHeader && authHeader.split(' ')[1]
+    if(token == null) return res.sendStatus(401)
+
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (error, user) => {
+        if (error) return res.sendStatus(403)
+        req.user = user
+    next()
+    })
+}
+
 //API
 
 //GETS
+
+app.get("/get", authenticateToken, (req, res)=>{
+    const exampleUsers = [
+        {
+            username: "Sergio",
+            title: 'Post 1'
+        },
+        {
+            username: "Andres",
+            title: 'Post 2'
+        }
+    ]
+    res.json(exampleUsers.filter(post => post.username === req.user.name))
+})
+
+app.post('/login', (req,res) => {
+    //Auth
+
+    //ACCESS TOKEN
+    const username = req.body.username
+    const user = {name: username}
+    const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
+    res.json({accessToken: accessToken})
+})
+
+
 app.get("/getProducts", async(req, res) => {
     try {
         const productData = await productModel.find();
@@ -31,6 +72,8 @@ app.get("/getProducts", async(req, res) => {
         res.status(500).json({message: error.message})
     }
 });
+
+
 
 app.get("/getProduct/:id", async(req, res) => {
     try {
@@ -43,9 +86,7 @@ app.get("/getProduct/:id", async(req, res) => {
     }
 });
 
-app.get("/get", (req, res)=>{
-    res.json({"users": ["userOne","userTwo", "userThree"]})
-})
+
 
 //POSTS
 app.post('/addProduct', async (req, res)=>{

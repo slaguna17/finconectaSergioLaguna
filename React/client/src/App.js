@@ -8,6 +8,8 @@ import Footer from './Footer';
 import Products from "./pages/Products"
 import Login from "./pages/Login"
 import Home from './pages/Home';
+import Signup from './pages/Signup';
+
 
 function App () {
 
@@ -31,6 +33,8 @@ function App () {
           <Route path='/' element={<Home/>}/>
           <Route path='/products' element={<Products/>}/>
           <Route path='/login' element={<Login/>}/>
+          <Route path='/signup' element={<Signup/>}/>
+
         </Routes>
       </div>
       <Footer></Footer>

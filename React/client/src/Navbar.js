@@ -9,7 +9,7 @@ export default function Navbar(){
     <ul>
         <CustomLink to="/products">Products</CustomLink>
         <CustomLink to="/login">Login</CustomLink>
-
+        <CustomLink to="/signup">Sign Up</CustomLink>
     </ul>
    </nav> 
     )

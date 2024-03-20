@@ -25,7 +25,7 @@ mongoose.connect(mongoURL).then(() =>{
 app.get("/getProducts", async(req, res) => {
     try {
         const productData = await productModel.find();
-        console.log(productData)
+        // console.log(productData)
         res.json(productData)
     } catch (error) {
         res.status(500).json({message: error.message})

@@ -8,9 +8,9 @@ import logo from './images/finconecta.jpeg'
 
 export default function Footer() {
     return (
-        <div class="footerContainer">
+        <div className="footerContainer">
 
-            <div class="footerNav">
+            <div className="footerNav">
                 <ul>
                     <li>
                         <Link to="/" className="hyperlink">
@@ -35,7 +35,7 @@ export default function Footer() {
                 </ul>
             </div>
             <h2 className="follow">Follow Us!</h2>
-            <div class="socials">
+            <div className="socials">
                 <Link to="https://www.facebook.com/finconecta">
                     <FontAwesomeIcon icon={faFacebook} size="2xl" style={{ color: "#24a9b4", }} />
                 </Link>
@@ -50,7 +50,7 @@ export default function Footer() {
                 </Link>
 
             </div>
-            <div class="bottom">
+            <div className="bottom">
                 <img src={logo} className="logo"></img>
                 <h3>Copyright &copy;2024;</h3>
             </div>

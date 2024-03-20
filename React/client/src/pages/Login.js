@@ -1,7 +1,5 @@
-import { useState } from 'react'
 import './login.css'
 export default function Login() {
-    const [action, setAction] = useState("Login")
     return (
         <div className='all'>
             <div className="body">

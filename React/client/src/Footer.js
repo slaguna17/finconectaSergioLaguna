@@ -28,7 +28,7 @@ export default function Footer() {
                         </Link>
                     </li>
                     <li>
-                        <Link to="/login" className="hyperlink">
+                        <Link to="/signup" className="hyperlink">
                             Sign Up
                         </Link>
                     </li>

@@ -3,7 +3,10 @@ const express = require('express')
 const mongoose = require('mongoose')
 const dotenv = require('dotenv')
 const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
 const productModel = require('./models/productModel')
+const userModel = require('./models/userModel')
+
 
 //SERVER
 const app = express()
@@ -38,28 +41,34 @@ function authenticateToken(req, res, next){
 
 //GETS
 
-app.get("/get", authenticateToken, (req, res)=>{
-    const exampleUsers = [
-        {
-            username: "Sergio",
-            title: 'Post 1'
-        },
-        {
-            username: "Andres",
-            title: 'Post 2'
-        }
-    ]
-    res.json(exampleUsers.filter(post => post.username === req.user.name))
+app.get("/get", authenticateToken, async (req, res)=>{
+    const u = await userModel.find({name: req.user.name})
+    res.json(u)
 })
 
-app.post('/login', (req,res) => {
+app.post('/login', async (req,res) => {
     //Auth
+    const user = await userModel.find({name: req.body.name, email: req.body.email})
 
-    //ACCESS TOKEN
-    const username = req.body.username
-    const user = {name: username}
-    const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
-    res.json({accessToken: accessToken})
+    if(user == null){
+        return res.status(400).send('No user found')
+    }
+    try {
+        if (await bcrypt.compare(req.body.password, u.password)){
+           console.log('aqui muero');
+        res.send('Correct Password')
+       } else {
+
+        res.send('Error, different password')
+       }
+    } catch {
+        res.status(500).send()
+    }
+    
+    // //ACCESS TOKEN
+
+    // const accessToken = jwt.sign(user.toJSON(), process.env.ACCESS_TOKEN_SECRET)
+    // res.json({accessToken: accessToken})
 })
 
 
@@ -98,6 +107,20 @@ app.post('/addProduct', async (req, res)=>{
         console.log(error.message)
         res.status(500).json({message: error.message})
     }
+})
+
+app.post('/signup', async (req, res) => {
+    try{
+        const salt = await bcrypt.genSalt()
+        const hashedPassword = await bcrypt.hash(req.body.password, salt)
+
+        const newUser = {name: req.body.name, email: req.body.email, password: hashedPassword}
+        await userModel.create(newUser)
+        res.status(201).send('New user created')
+    } catch {
+        res.status(500).send('Erroooor')
+    }
+    
 })
 
 //PUT

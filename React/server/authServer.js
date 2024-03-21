@@ -3,6 +3,9 @@ const express = require('express')
 const mongoose = require('mongoose')
 const dotenv = require('dotenv')
 const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
+
+const userModel = require('./models/userModel')
 
 //SERVER
 const app = express()
@@ -29,7 +32,7 @@ app.post('/loginRefresh', (req,res) => {
 
     //ACCESS TOKEN
     const username = req.body.username
-    const user = {name: username}
+    // const user = {name: username}
     const accessToken = generateAccessToken(user)
     const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET)
     refreshTokens.push(refreshToken)
@@ -60,25 +63,16 @@ function authenticateToken(req, res, next){
 }
 
 
-app.get("/get", authenticateToken, (req, res)=>{
-    const exampleUsers = [
-        {
-            username: "Sergio",
-            title: 'Post 1'
-        },
-        {
-            username: "Andres",
-            title: 'Post 2'
-        }
-    ]
-    res.json(exampleUsers.filter(post => post.username === req.user.name))
+app.get("/get", authenticateToken, async(req, res)=>{
+    console.log(req.user);
+    const u = await userModel.find({name: req.user.name})
+    res.json(u)
 })
-app.post('/login', (req,res) => {
+app.post('/login', async (req,res) => {
     //Auth
 
     //ACCESS TOKEN
-    const username = req.body.username
-    const user = {name: username}
+
     const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
     res.json({accessToken: accessToken})
 })

@@ -22,16 +22,6 @@ export default function Products(){
         return lists
     }
 
-    // useEffect(() => {
-    //     // DELETE request using fetch with async/await
-    //     async function deletePost() {
-    //         await fetch('https://jsonplaceholder.typicode.com/posts/1', { method: 'DELETE' });
-    //         setStatus('Delete successful');
-    //     }
-    
-    //     deletePost();
-    // }, []);
-
     function getAllProducts() {
         setAction("vanish")
         fetch('/getProducts')

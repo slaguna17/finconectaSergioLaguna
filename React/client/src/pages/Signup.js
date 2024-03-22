@@ -1,20 +1,53 @@
 import { useState } from 'react'
-import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 import './signup.css'
 export default function Signup() {
-    const [action, setAction] = useState("Signup")
+    const [name, setName] = useState("")
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
 
     const addUser = async (event) => {
-        console.log(event);
-        const newUser = { name: "claudio", email: "aaa", password: "a" }
+        console.log('Inicie el submit');
         event.preventDefault()
-        await axios.post('/signup', newUser)
+        if (
+            name == null || name == '' ||
+            email == null || email == '' ||
+            password == null || password == ''
+        ) {
+            console.log("Please fill all the fields");
+            toast.error("Fill all fields!")
+        } else {
+            const newUser = { name: name, email: email, password: password }
+            console.log(newUser);
+            try {
+                await fetch('/signup',
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(newUser)
+                    }
+                ).then(response => {
+                    console.log(response);
+                    response.json()
+                    toast.success("User created successfully")
+                })
+
+            } catch (error) {
+                console.error('Error al iniciar sesion', error)
+                toast.error("Something went wrong")
+            }
+
+        }
     }
 
     return (
         <div className='all'>
-            <form onSubmit={(event) => {addUser(event)}}>
+            <ToastContainer />
+            <form onSubmit={addUser}>
                 <div className="body">
                     <div className="header">
                         <div className="title">
@@ -26,17 +59,17 @@ export default function Signup() {
                     </div>
                     <div className="inputs">
                         <div className="input">
-                            <input type="text" placeholder='Name'>
+                            <input type="text" placeholder='Name' id='name' value={name} onChange={(e) => { setName(e.target.value) }}>
 
                             </input>
                         </div>
                         <div className="input">
-                            <input type="text" placeholder='Email'>
+                            <input type="text" placeholder='Email' id='email' value={email} onChange={(e) => { setEmail(e.target.value) }}>
 
                             </input>
                         </div>
                         <div className="input">
-                            <input type="password" placeholder='Password'>
+                            <input type="password" placeholder='Password' id='password' value={password} onChange={(e) => { setPassword(e.target.value) }}>
 
                             </input>
                         </div>

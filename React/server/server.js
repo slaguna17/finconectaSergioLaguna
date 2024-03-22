@@ -46,6 +46,18 @@ app.get("/getProducts", async(req, res) => {
     }
 });
 
+app.get("/getProductID", async(req, res) => {
+    try {
+        const name = req.params.name
+        const price = req.params.price
+        console.log(name);
+        const productData = await productModel.find({name: name});
+        res.json(productData)
+    } catch (error) {
+        res.status(500).json({message: error.message})
+    }
+});
+
 app.get("/getProduct/:id", async(req, res) => {
     try {
         const {id} = req.params
@@ -84,11 +96,13 @@ app.put('/updateProduct/:id', async (req,res)=>{
 app.delete('/deleteProduct/:id', async (req, res) => {
     try {
         const {id} = req.params
+        console.log(id);
         const productData = await productModel.findByIdAndDelete(id);
+        console.log(productData);
         if(! productData){
             return res.status(404).json({message: 'There is no product to delete'})
         }
-        res.status(200).json(productData)
+        res.status(200).send({message: 'Se elemino correctamente el producto', id})
     } catch (error) {
         res.status(500).json({message: error.message})
     }
@@ -123,12 +137,12 @@ app.post('/signup', async (req, res) => {
     try{
         const salt = await bcrypt.genSalt()
         const hashedPassword = await bcrypt.hash(req.body.password, salt)
-
         const newUser = {name: req.body.name, email: req.body.email, password: hashedPassword}
+        console.log(newUser);
         await userModel.create(newUser)
-        res.status(201).send('New user created')
+        res.status(201).json({message: 'User created correctly'})
     } catch {
-        res.status(500).send('Erroooor')
+        res.status(500).send()
     }
     
 })

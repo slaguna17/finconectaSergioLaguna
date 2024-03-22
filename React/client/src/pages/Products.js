@@ -1,18 +1,46 @@
-import { useState, useEffect } from 'react'
-import axios from 'axios';
+import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom';
+import 'react-toastify/dist/ReactToastify.css'
+import ModalContentCreate from '../components/ModalContentCreate';
+import ModalContentUpdate from '../components/ModalContentUpdate';
+import ModalContentDelete from '../components/ModalContentDelete';
+
+
 export default function Products(){
-    let navigate = useNavigate()
-    const productExample = {id:0, name: 'Plushie', price: 70, image: 'https://images.pexels.com/photos/1716861/pexels-photo-1716861.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'}
+
+    //DEFAULT PRODUCT
+    const productExample = {
+        id:0,
+        name: 'Plushie',
+        price: 70, 
+        image: 'https://images.pexels.com/photos/1716861/pexels-photo-1716861.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'
+    }
+
+    //HOOKS
     const [products, setProducts] = useState([productExample])
-    var [action, setAction] = useState("ejemplo")
+    var [action, setAction] = useState("example")
+    let navigate = useNavigate()
     
     function productsAsLists() {
         let lists = products.map(product => (
             <li key={product.id}>
                 Product Name: {product.name}
-                {product.id === 0  ? <div></div> : <button onClick={updateProduct(product.id)}>Update Product</button>}
-                {product.id === 0 ? <div></div> : <button onClick={deleteProduct(product.id)}>Delete Product</button>}
+                {product.id === 0  
+                ? <div></div> 
+                : <button onClick={() => {
+                    console.log('The product ID is',product._id);
+                    setDialogContent(<ModalContentUpdate ID={product._id}/>)
+                    toggleDialog()
+                }}>Update Product</button>
+                }
+                {product.id === 0 
+                ? <div></div> 
+                : <button onClick={() => {
+                    console.log('The product ID is',product._id);
+                    setDialogContent(<ModalContentDelete ID={product._id}/>)
+                    toggleDialog()
+                }}>Delete Product</button>
+                }
                 <br></br>
                 Price: {product.price}{"$"}
                 <br></br>
@@ -32,59 +60,41 @@ export default function Products(){
             })
     }
 
-    const addProduct = async (event) => {
-        const newProduct = {name: "Jabon", price : 15, image: "https://images.pexels.com/photos/773252/pexels-photo-773252.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"}
-        event.preventDefault()
-        await axios.post('/addProduct', newProduct)
+    const dialogRef = useRef(null)
+    const [dialogContent, setDialogContent] = useState(null)
+
+    function toggleDialog(){
+        if(!dialogRef.current){
+            return
+        }
+        dialogRef.current.hasAttribute("open")
+        ? dialogRef.current.close()
+        : dialogRef.current.showModal();
     }
 
-    // const addProduct = (n, p, i) => {
-    //     n = "Jabon"
-    //     p = 15
-    //     i = "https://images.pexels.com/photos/773252/pexels-photo-773252.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-    //     const newProduct = {name: n, price: p, image:i }
-    //     console.log("Nombre: " + n + " Precio: " + p + " Imagen: " + i)
-    //     setAction("vanish")
-    //     fetch('/addProduct', {method : 'POST'})
-    //     .then(res => {
-    //         if(!res.ok){
-    //             console.log("Problem")
-    //             return res.status(500)
-    //         }
-    //         return newProduct
-    //     }).then(data => {
-    //         console.log(data)
-    //         console.log('Success')
-    //     }).catch(error => {
-    //         console.log(error)
-    //     })
-    // }
-
-    function updateProduct(id) {
-        // fetch('/updateProduct/' + id, {method: 'UPDATE'})
-        //     .then(res => {
-        //         return res.json()
-        //     }).then(val => {
-        //         setProducts(val)
-        //     })
+    const dialogClick = (event) => {
+        if (event.currentTarget === event.target) {
+            toggleDialog()
+        }
     }
 
-    function deleteProduct(id) {
-        // fetch('/deleteProduct/' + id, {method: 'DELETE'})
-        //     .then(res => {
-        //         return res.json()
-        //     }).then(val => {
-        //         setProducts(val)
-        //     })
-    }
 
     return (
         <div>
             <h1>PRODUCTS</h1>
-            {action === "ejemplo" ? <h2>Este es un producto de ejemplo</h2> : <h2>Estos son los productos de la base de datos</h2>}
+            {action === "example" ? <h2>This is a sample product</h2> : <h2>These are the Database products</h2>}
             <button onClick={getAllProducts}> GET ALL PRODUCTS </button>
-            <button onClick={addProduct}>CREATE A PRODUCT </button>
 
+            <button onClick={() => {
+                setDialogContent(<ModalContentCreate />)
+                toggleDialog()
+            }}>CREATE A PRODUCT </button>
+            <dialog ref={dialogRef} onClick={dialogClick}>
+                {dialogContent}
+                <button onClick={toggleDialog}> 
+                    Close 
+                </button>
+            </dialog>
             <ul>
                 {productsAsLists()}
             </ul>

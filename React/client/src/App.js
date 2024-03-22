@@ -15,15 +15,15 @@ function App () {
 
   const [backendData, setBackendData] = useState([{}])
 
-  useEffect(() => {
-    fetch("/get").then(
-      response => response.json()
-    ).then(
-      data => {
-        setBackendData(data)
-      }
-    )
-  }, [])
+  // useEffect(() => {a
+  //   fetch("/get").then(
+  //     response => response.json()
+  //   ).then(
+  //     data => {
+  //       setBackendData(data)
+  //     }
+  //   )
+  // }, [])
 
   return (
     <>

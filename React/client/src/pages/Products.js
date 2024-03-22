@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 export default function Products(){
-    const productExample = {id:0, name: 'Plushie', price: 70, image: 'https://images.pexels.com/photos/7465582/pexels-photo-7465582.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'}
+    let navigate = useNavigate()
+    const productExample = {id:0, name: 'Plushie', price: 70, image: 'https://images.pexels.com/photos/1716861/pexels-photo-1716861.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'}
     const [products, setProducts] = useState([productExample])
     var [action, setAction] = useState("ejemplo")
     
@@ -39,31 +42,33 @@ export default function Products(){
             })
     }
 
-    function addProduct(n, p, i){
-        n = "Jabon"
-        p = 15
-        i = "https://images.pexels.com/photos/773252/pexels-photo-773252.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-        const newProduct = {name: n, price: p, image:i }
-        console.log("Nombre: " + n + " Precio: " + p + " Imagen: " + i)
-        setAction("vanish")
-        fetch('/addProduct', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: newProduct
-        }).then(res => {
-            if(!res.ok){
-                console.log("Problem")
-                return
-            }
-            return res.json()
-        }).then(data => {
-            console.log('Success')
-        }).catch(error => {
-            console.log(error)
-        })
+    const addProduct = async (event) => {
+        const newProduct = {name: "Jabon", price : 15, image: "https://images.pexels.com/photos/773252/pexels-photo-773252.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"}
+        event.preventDefault()
+        await axios.post('/addProduct', newProduct)
     }
+
+    // const addProduct = (n, p, i) => {
+    //     n = "Jabon"
+    //     p = 15
+    //     i = "https://images.pexels.com/photos/773252/pexels-photo-773252.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    //     const newProduct = {name: n, price: p, image:i }
+    //     console.log("Nombre: " + n + " Precio: " + p + " Imagen: " + i)
+    //     setAction("vanish")
+    //     fetch('/addProduct', {method : 'POST'})
+    //     .then(res => {
+    //         if(!res.ok){
+    //             console.log("Problem")
+    //             return res.status(500)
+    //         }
+    //         return newProduct
+    //     }).then(data => {
+    //         console.log(data)
+    //         console.log('Success')
+    //     }).catch(error => {
+    //         console.log(error)
+    //     })
+    // }
 
     function updateProduct(id) {
         // fetch('/updateProduct/' + id, {method: 'UPDATE'})

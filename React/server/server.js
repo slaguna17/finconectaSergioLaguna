@@ -4,17 +4,15 @@ const mongoose = require('mongoose')
 const dotenv = require('dotenv')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
+
+//MODELS
 const productModel = require('./models/productModel')
 const userModel = require('./models/userModel')
-
 
 //SERVER
 const app = express()
 const port = process.env.PORT || 5000
 app.use(express.json())
-
-
-//Variables de ambiente
 dotenv.config()
 
 //Conexion DB
@@ -38,51 +36,15 @@ function authenticateToken(req, res, next){
 }
 
 //API
-
-//GETS
-
-app.get("/get", authenticateToken, async (req, res)=>{
-    const u = await userModel.find({name: req.user.name})
-    res.json(u)
-})
-
-app.post('/login', async (req,res) => {
-    //Auth
-    const user = await userModel.find({name: req.body.name, email: req.body.email})
-
-    if(user == null){
-        return res.status(400).send('No user found')
-    }
-    try {
-        if (await bcrypt.compare(req.body.password, u.password)){
-           console.log('aqui muero');
-        res.send('Correct Password')
-       } else {
-
-        res.send('Error, different password')
-       }
-    } catch {
-        res.status(500).send()
-    }
-    
-    // //ACCESS TOKEN
-
-    // const accessToken = jwt.sign(user.toJSON(), process.env.ACCESS_TOKEN_SECRET)
-    // res.json({accessToken: accessToken})
-})
-
-
+//PRODUCTS
 app.get("/getProducts", async(req, res) => {
     try {
         const productData = await productModel.find();
-        // console.log(productData)
         res.json(productData)
     } catch (error) {
         res.status(500).json({message: error.message})
     }
 });
-
-
 
 app.get("/getProduct/:id", async(req, res) => {
     try {
@@ -95,9 +57,6 @@ app.get("/getProduct/:id", async(req, res) => {
     }
 });
 
-
-
-//POSTS
 app.post('/addProduct', async (req, res)=>{
     try {
         const newProduct = await productModel.create(req.body)
@@ -106,6 +65,57 @@ app.post('/addProduct', async (req, res)=>{
     } catch (error) {
         console.log(error.message)
         res.status(500).json({message: error.message})
+    }
+})
+
+app.put('/updateProduct/:id', async (req,res)=>{
+    try {
+        const {id} = req.params
+        const productData = await productModel.findByIdAndUpdate(id, req.body);
+        if(! productData){
+            return res.status(404).json({message: 'There is no product'})
+        }
+        res.status(200).json(productData)
+    } catch (error) {
+        res.status(500).json({message: error.message})
+    }
+})
+
+app.delete('/deleteProduct/:id', async (req, res) => {
+    try {
+        const {id} = req.params
+        const productData = await productModel.findByIdAndDelete(id);
+        if(! productData){
+            return res.status(404).json({message: 'There is no product to delete'})
+        }
+        res.status(200).json(productData)
+    } catch (error) {
+        res.status(500).json({message: error.message})
+    }
+})
+
+//USER AND AUTH
+app.get("/get", authenticateToken, async (req, res)=>{
+    const u = await userModel.find({name: req.user.name})
+    res.json(u)
+})
+
+app.post('/login', async (req,res) => {
+    const user = await userModel.findOne({name: req.body.name, email: req.body.email})
+    console.log(user);
+    if(user != null){
+        if (await bcrypt.compare(req.body.password, user.password)){
+            const accessToken = jwt.sign(JSON.stringify(user), process.env.ACCESS_TOKEN_SECRET)
+            console.log(accessToken);
+            res.status(200).json({accessToken: accessToken, message : 'Correct Password'})
+            console.log('token creado para', user.name);
+        } else {
+         console.log('Wrong Password');
+         res.status(403).send()
+        }
+    } else {
+        console.log('Usuario no encontrado');
+        res.status(404).send()
     }
 })
 
@@ -121,34 +131,6 @@ app.post('/signup', async (req, res) => {
         res.status(500).send('Erroooor')
     }
     
-})
-
-//PUT
-app.put('/updateProduct/:id', async (req,res)=>{
-    try {
-        const {id} = req.params
-        const productData = await productModel.findByIdAndUpdate(id, req.body);
-        if(! productData){
-            return res.status(404).json({message: 'There is no product'})
-        }
-        res.status(200).json(productData)
-    } catch (error) {
-        res.status(500).json({message: error.message})
-    }
-})
-
-//DELETE
-app.delete('/deleteProduct/:id', async (req, res) => {
-    try {
-        const {id} = req.params
-        const productData = await productModel.findByIdAndDelete(id);
-        if(! productData){
-            return res.status(404).json({message: 'There is no product to delete'})
-        }
-        res.status(200).json(productData)
-    } catch (error) {
-        res.status(500).json({message: error.message})
-    }
 })
 
 //Iniciar server

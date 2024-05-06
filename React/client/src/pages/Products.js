@@ -25,6 +25,9 @@ export default function Products(){
         let lists = products.map(product => (
             <li key={product.id}>
                 Product Name: {product.name}
+                <br></br>
+                Price: {product.price}{"$"}
+                <br></br>
                 {product.id === 0  
                 ? <div></div> 
                 : <button onClick={() => {
@@ -42,9 +45,10 @@ export default function Products(){
                 }}>Delete Product</button>
                 }
                 <br></br>
-                Price: {product.price}{"$"}
                 <br></br>
                 <img src={product.image}></img>
+                <br></br>
+
             </li>
         ))
         return lists

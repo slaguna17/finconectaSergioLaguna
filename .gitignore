@@ -1,5 +1,6 @@
 # General ignores
 node_modules/       # Ignore all node_modules folders
+**/node_modules/
 .DS_Store           # macOS desktop services store
 .env                # Environment variables (sensitive data)
 *.log               # Log files
@@ -42,6 +43,8 @@ tmp/
 # Specific to client (React)
 React/client/node_modules/ # Redundant but good for clarity
 React/server/node_modules/ # Redundant but good for clarity
+./React/client/node_modules/ # Redundant but good for clarity
+./React/server/node_modules/ # Redundant but good for clarity
 /client/node_modules/
 /server/node_modules/
 client/.env.*.local # Local environment files

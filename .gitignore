@@ -1,0 +1,48 @@
+# General ignores
+node_modules/       # Ignore all node_modules folders
+.DS_Store           # macOS desktop services store
+.env                # Environment variables (sensitive data)
+*.log               # Log files
+npm-debug.log*      # npm debug logs
+yarn-debug.log*     # Yarn debug logs
+yarn-error.log*     # Yarn error logs
+
+# IDEs and editors
+.idea/             # IntelliJ IDEA
+.vscode/           # Visual Studio Code
+*.suo              # Visual Studio solution user options
+*.ntvs*            # Visual Studio files
+*.njsproj          # Visual Studio project files
+*.sln              # Visual Studio solution file
+*.swp              # Swap files (Vim, etc.)
+
+# Build artifacts
+build/              # React build output
+dist/               # Often used for backend builds or distributions
+
+# Optional: OS-specific files
+Thumbs.db           # Windows thumbnail cache
+ehthumbs.db         # Windows thumbnail cache
+Desktop.ini         # Windows folder settings
+.AppleDouble        # macOS resource forks
+.LSOverride         # macOS folder settings
+
+# Optional: Dependency lockfiles (if you want to regenerate them locally)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Optional: Coverage reports
+coverage/
+
+# Optional: Temporary files
+tmp/
+*.tmp
+
+# Specific to client (React)
+client/build/ # Redundant as node_modules is ignored, but good for clarity
+client/.env.*.local # Local environment files
+
+# Specific to server (Node.js/Express)
+server/node_modules/ # Redundant as node_modules is ignored, but good for clarity
+server/.env # Redundant as .env is ignored, but good for clarity

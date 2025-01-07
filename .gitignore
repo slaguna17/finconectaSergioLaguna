@@ -42,6 +42,8 @@ tmp/
 # Specific to client (React)
 React/client/node_modules/ # Redundant but good for clarity
 React/server/node_modules/ # Redundant but good for clarity
+/client/node_modules/
+/server/node_modules/
 client/.env.*.local # Local environment files
 
 # Specific to server (Node.js/Express)
